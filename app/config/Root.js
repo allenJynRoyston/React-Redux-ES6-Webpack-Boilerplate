@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { Home, About } from '../components';
+import { Home, About } from '../components/pages';
 
 const Root = () => {
   return (

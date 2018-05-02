@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import { Header, NavElement, Footer } from '../elements'
 
-const About = () => {
-  return (
-    <div>
-      <h2 id="heading">About</h2>
-    </div>
-  );
-};
+class About extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: 'About',
+    };
+  }
+
+  render() {
+    return (
+      <Fragment>
+        <Header />
+        <h1>{this.state.title}</h1>
+        <NavElement />
+        <Footer />
+      </Fragment>
+    )
+  }
+}
 
 export default About;

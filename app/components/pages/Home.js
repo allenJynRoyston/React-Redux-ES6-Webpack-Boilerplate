@@ -1,14 +1,24 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { Fragment } from 'react';
+import { Header, NavElement, Footer } from '../elements'
 
-const Home = () => {
-  return (
-    <div>
-      <h2 id="heading">Hello World</h2>
-      <Link to="/">Home</Link>
-      <Link to="/about">About</Link>
-    </div>
-  );
-};
+class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: 'Home',
+    };
+  }
+
+  render() {
+    return (
+      <Fragment>
+        <Header />
+        <h1>{this.state.title}</h1>
+        <NavElement />
+        <Footer />
+      </Fragment>
+    )
+  }
+}
 
 export default Home;
