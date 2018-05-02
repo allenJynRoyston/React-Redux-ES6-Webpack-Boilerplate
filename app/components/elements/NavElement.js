@@ -7,6 +7,7 @@ class NavElement extends React.Component {
     return (
       <Fragment>
         <Link to="/">Home</Link>
+        &nbsp;
         <Link to="/about">About</Link>
       </Fragment>
     )

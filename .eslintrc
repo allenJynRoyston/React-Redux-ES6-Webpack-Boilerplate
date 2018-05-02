@@ -18,6 +18,12 @@
       "components": [ "Link" ],
       "specialLink": [ "to" ]
     }],
+    "class-methods-use-this": "off",
+    "no-trailing-spaces": "off",
+    "max-len": "off",
+    "no-console": "off",
+    "no-debugger": "off",
+    "no-param-reassign": ["error", { "props": false }],
     "space-before-function-paren": "off",
     "react/prefer-stateless-function": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
