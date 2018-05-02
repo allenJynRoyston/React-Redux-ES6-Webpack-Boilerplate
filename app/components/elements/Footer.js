@@ -4,7 +4,16 @@ class Footer extends React.Component {
   render() {
     return (
       <Fragment>
-        <h1>Footer</h1>
+        <footer className="footer">
+          <div className="container">
+            <div className="content has-text-centered">
+              <p>
+                This <strong>React Demo</strong> by <strong> <a href="https://allenroyston.com">Allen Royston</a></strong>.                
+              </p>
+              <blockquite>Simple is better</blockquite>              
+            </div>
+          </div>
+        </footer>
       </Fragment>
     )
   }

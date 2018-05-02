@@ -1,4 +1,5 @@
 import React from 'react';
+// import ToDoLine from 
 
 class ToDoList extends React.Component {
   constructor(props) {
@@ -12,14 +13,16 @@ class ToDoList extends React.Component {
     };
   }
 
-  render() {    
+  render() {
+    let location = `${window.location.pathname}${'#'}`;
+
     return (
       <div>
         {
           this.state.mockdata.map((item, index) => {
             item.key = `list_id_${index}`;
             return (
-              <a href="/#" className={item.value ? 'strikethrough' : ''} onClick={() => { item.value = !item.value }} key={item.key}>{item.text}<br /></a>
+              <a href={location} className={item.value ? 'strikethrough' : ''} onClick={() => { item.value = !item.value }} key={item.key}>{item.text}<br /></a>
             )
           })
         }

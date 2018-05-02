@@ -14,10 +14,10 @@
     "es6": true
   },
   "rules": {
-    "jsx-a11y/anchor-is-valid": [ "error", {
-      "components": [ "Link" ],
-      "specialLink": [ "to" ]
-    }],
+    "jsx-a11y/anchor-is-valid": "off",  
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/interactive-supports-focus": "off",
+    "prefer-const": "off",
     "class-methods-use-this": "off",
     "no-trailing-spaces": "off",
     "max-len": "off",
@@ -25,6 +25,7 @@
     "no-debugger": "off",
     "no-param-reassign": ["error", { "props": false }],
     "space-before-function-paren": "off",
+    "react/no-unused-state": "off",
     "react/prefer-stateless-function": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "linebreak-style": "off",

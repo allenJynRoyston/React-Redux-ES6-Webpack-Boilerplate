@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Header, NavElement, Footer } from '../elements'
+import { Header, Footer } from '../elements'
 
 class About extends React.Component {
   constructor(props) {
@@ -10,11 +10,23 @@ class About extends React.Component {
   }
 
   render() {
-    return (
+    let { state } = this;
+
+    return (      
       <Fragment>
         <Header />
-        <h1>{this.state.title}</h1>
-        <NavElement />
+        <div className="container main-content">
+          <section className="hero">
+            <div className="hero-body">
+              <p className="title">
+                {state.title}
+              </p>
+              <p className="subtitle">
+                Everything you need to <strong>create a website</strong> with Bulma
+              </p>
+            </div>
+          </section>
+        </div>
         <Footer />
       </Fragment>
     )

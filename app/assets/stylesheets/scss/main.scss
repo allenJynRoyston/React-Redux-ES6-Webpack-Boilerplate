@@ -1,15 +1,6 @@
 @import './normalize.css';
-@import './skeleton.css';
+@import './bulma.css';
+@import './custom.css';
 
 $black: #0f0f0f;
 $white: #f2f2f2;
-
-body {
-  color: $black;
-  background-color: $white;
-}
-
-
-.strikethrough {
-  text-decoration: line-through;
-}

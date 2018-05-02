@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
-import { Header, Footer } from '../elements'
+import { Header, Footer, TodoList } from '../elements'
 
-class Home extends React.Component {
+class Todo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: 'Home',
+      title: 'Todo',
     };
   }
 
@@ -26,11 +26,14 @@ class Home extends React.Component {
               </p>
             </div>
           </section>
-        </div>
+          <div className="hero-body">
+            <TodoList />
+          </div>
+        </div>     
         <Footer />
       </Fragment>
     )
   }
 }
 
-export default Home;
+export default Todo;

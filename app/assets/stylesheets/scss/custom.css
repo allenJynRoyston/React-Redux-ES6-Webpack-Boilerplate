@@ -1,0 +1,20 @@
+.main-content {
+  min-height: 700px
+}
+
+.outline {
+  outline: 2px solid orange;
+}
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.center {
+  margin: auto;
+  width: 50%;
+}
+
+.center-text{
+  text-align: center;
+}
+  
