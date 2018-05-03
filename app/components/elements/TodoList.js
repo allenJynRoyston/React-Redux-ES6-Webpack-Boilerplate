@@ -5,7 +5,8 @@ class ToDoList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mockdata: [
+      myText: '', 
+      listdata: [
         { text: 'Item 1', value: false },
         { text: 'Item 2', value: false },
         { text: 'Item 3', value: false },
@@ -14,15 +15,22 @@ class ToDoList extends React.Component {
   }
 
   render() {
-    let location = `${window.location.pathname}${'#'}`;
-    
+    let { myText, listdata } = this.state
+
+    let changeState = (item) => {
+      item.value = !item.value;
+      this.setState({ myText: 'Value has been changed!' })
+      this.forceUpdate()
+    }
+
     return (
       <div>
+        <p>{myText}</p>
         {
-          this.state.mockdata.map((item, index) => {
+          listdata.map((item, index) => {
             item.key = `list_id_${index}`;
             return (
-              <a href={location} className={item.value ? 'strikethrough' : ''} onClick={() => { item.value = !item.value }} key={item.key}>{item.text}<br /></a>
+              <a role="button" className={item.value ? 'strikethrough' : ''} onClick={() => { changeState(item) }} key={item.key}>{item.text}<br /></a>
             )
           })
         }

@@ -14,10 +14,16 @@
     "es6": true
   },
   "rules": {
-    "jsx-a11y/anchor-is-valid": "off",  
+    "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/interactive-supports-focus": "off",
+    "object-curly-spacing": "off",
+    "object-curly-newline": "off",
+    "react/require-default-props": "off",
+    "comma-dangle": "off",
+    "spaced-comment": "off",
     "prefer-const": "off",
+    "no-unused-vars": "off",
     "class-methods-use-this": "off",
     "no-trailing-spaces": "off",
     "max-len": "off",

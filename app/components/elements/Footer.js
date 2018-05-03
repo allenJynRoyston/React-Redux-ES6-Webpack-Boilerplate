@@ -8,9 +8,9 @@ class Footer extends React.Component {
           <div className="container">
             <div className="content has-text-centered">
               <p>
-                This <strong>React Demo</strong> by <strong> <a href="https://allenroyston.com">Allen Royston</a></strong>.                
+                This <strong>React Boilerplate</strong> by <strong> <a href="http://allenroyston.com/">Allen Royston</a></strong>.                
               </p>
-              <blockquite>Simple is better</blockquite>              
+              <p><small>- Simple is better -</small></p>
             </div>
           </div>
         </footer>
