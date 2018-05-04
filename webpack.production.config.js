@@ -16,8 +16,8 @@ const config = {
 
   output: {
     filename: 'bundle.js',
-    path: resolve(__dirname, 'dist'),
-    publicPath: '',
+    path: resolve(__dirname, './dist'),
+    publicPath: '/dist/',
   },
 
   plugins: [
