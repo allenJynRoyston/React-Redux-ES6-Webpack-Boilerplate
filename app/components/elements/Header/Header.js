@@ -1,7 +1,7 @@
 import React from 'react';
-import { NavElement } from '../elements'
+import { NavDropdown } from '../../elements'
 
-import mainLogo from '../../assets/images/react-logo.png';
+import mainLogo from '../../../assets/images/react-logo.png';
 
 
 class Header extends React.Component {
@@ -16,7 +16,7 @@ class Header extends React.Component {
             Navigation       
           </a>        
           <div className="navbar-dropdown">          
-            <NavElement />           
+            <NavDropdown />           
           </div>
         </div>               
       </nav>

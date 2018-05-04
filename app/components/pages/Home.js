@@ -41,9 +41,9 @@ class Home extends React.Component {
                 Everything you need to <strong>create a website</strong> with Bulma
               </p>
             </div>
-            <Grid columns={3} rows={3} height={500} padding={1} data={dataSet1} />
+            <Grid columns={3} rows={3} blocksize={300} padding={1} data={dataSet1} />
             <br />
-            <Grid columns={3} rows={3} height={500} padding={1} data={dataSet2} />
+            <Grid columns={3} rows={3} blocksize={300} padding={1} data={dataSet2} />
           </section>
         </div>
         <Footer />

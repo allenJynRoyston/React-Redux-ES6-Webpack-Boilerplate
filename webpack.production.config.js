@@ -8,8 +8,8 @@ const config = {
   devtool: 'cheap-module-source-map',
 
   entry: [
-    './main.js',
-    './assets/scss/main.scss',
+    './app.js',
+    './assets/stylesheets/scss/main.scss'
   ],
 
   context: resolve(__dirname, 'app'),

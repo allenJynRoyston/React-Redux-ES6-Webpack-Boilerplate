@@ -1,68 +1,72 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { NavElement } from '../elements'
-
 class Grid extends React.Component {
   constructor(props) {
     super(props);
 
     // get props/prop defaults
-    let {columns = 0, rows = 0, height = 0, padding = 0, data = []} = this.props;
+    let {columns = 0, rows = 0, blocksize = 0, padding = 0, data = []} = this.props;
 
-    // define grid size
+    // define screen breakpoints
+    let breakpoints = {desktop: 1600, tablet: 1024, mobile: 600}
+
+    // set grid size
     let gridSize = {
       columns,
-      rows,
-      gridHeight: `${height}px`,
-      padding: `${padding}px`
+      rows,      
+      blocksize
     }
 
-    // create new blank stylesheet, add blocksizes to it
+    // programatically create stylesheet for grid system
     let blockStyles = (() => {
       let randomId = Math.floor(Math.random() * Math.floor(1000));
       let classes = {
         randomId,
+        wrapper: `${randomId}_grid-wrapper`,
         container: `__${randomId}_grid-container`,
         box: `__${randomId}_grid-box`,
         inside: `__${randomId}_grid-inside`,
       }
+
       // Create the <style> tag
       let style = document.createElement('style');      
+      
       // WebKit hack :(
-
       let rtStylesheet = `
-        .grid-wrapper{
+        .${classes.wrapper}{
           display: grid;
           width: 100%;
-          height: ${gridSize.gridHeight};
+          height: auto
         }
 
-        @media only screen and (max-width: 600px) {
-          .grid-wrapper{
-            display: grid;
-            width: 100%;
-            height: ${gridSize.gridHeight};
-            border: 2px solid red
-          }
-        }  
-
+        /* destkop grid */
         .${classes.container} {
           display: grid;
           grid-template-columns: repeat(${gridSize.columns}, ${(100 / gridSize.columns)}%);
-          grid-template-rows: repeat(${gridSize.rows}, ${(100 / gridSize.rows)}%);          
+          grid-template-rows: repeat(${gridSize.rows}, ${blocksize}px);          
         }  
 
-        @media only screen and (max-width: 600px) {
+        /* tablet grid */
+        @media only screen and (max-width: ${breakpoints.tablet}px) {
           .${classes.container} {
             display: grid;
             grid-template-columns: 50% 50%;
-            grid-template-rows: repeat(${gridSize.rows + gridSize.columns}, ${(100 / (gridSize.rows + gridSize.columns))}%);                 
+            grid-template-rows: repeat(auto, ${blocksize}px);             
           }  
         }  
 
+        /* mobile grid */
+        @media only screen and (max-width: ${breakpoints.mobile}px) {
+          .${classes.container} {
+            display: grid;
+            grid-template-columns: 100%;
+            grid-template-rows: repeat(auto,${blocksize}px);            
+          }  
+        }          
+
         .${classes.box} {
-          padding: ${gridSize.padding};
+          padding: ${padding}px;
           font-size: 150%;
         }
 
@@ -76,41 +80,67 @@ class Grid extends React.Component {
           justify-content: center;          
         }        
       `
+
+      // add to DOM
       style.appendChild(document.createTextNode(rtStylesheet));      
-      // Add the <style> element to the page
       document.head.appendChild(style);     
-      style.sheet.classes = classes;    
-      style.sheet.gridSize = gridSize;            
+      style.sheet.classes = classes;             
       return style.sheet;
     })();
-    
+        
     this.state = {
       blockStyles,
-      data
+      data,
+      breakpoints,
+      gridSize
     }
   }
 
   render() {
-    let {data, blockStyles} = this.state;
+    let {data, blockStyles, breakpoints, gridSize} = this.state;
 
     let setGridSize = (ele, index) => {      
       let styleName = `__${blockStyles.classes.randomId}_block_${index}`;
-      let style = `${styleName} { 
-        grid-column: ${ele.location.column}/ ${(ele.location.column + ele.size)};  
-        grid-row: ${ele.location.row}/ ${(ele.location.row + ele.size)}; 
-
-        @media only screen and (max-width: 600px) {
-          grid-column: ${index};            
+      let style; 
+      
+      // for desktop
+      style = `
+        .${styleName} { 
+          grid-column: ${ele.location.column}/ ${(ele.location.column + ele.size)};  
+          grid-row: ${ele.location.row}/ ${(ele.location.row + ele.size)}; 
         }
-      }`
-      console.log(style)
+      `
+      blockStyles.insertRule(`${style}`, blockStyles.rules.length);
+      
+      // for tablet
+      style = `
+        @media only screen and (max-width: ${breakpoints.tablet}px) {
+          .${styleName} { 
+            grid-column: auto;
+            grid-row: auto;
+            height: ${gridSize.blocksize}px
+          }
+        }
+      `
+      blockStyles.insertRule(`${style}`, blockStyles.rules.length);
 
-      blockStyles.insertRule(`.${style}`, blockStyles.rules.length);
+      // for mobile
+      style = `
+      @media only screen and (max-width: ${breakpoints.mobile}px) {
+        .${styleName} { 
+          grid-column: auto;
+          grid-row: auto;
+          height: ${gridSize.blocksize}px
+        }
+      }
+      `
+      blockStyles.insertRule(`${style}`, blockStyles.rules.length);
+
       return `${blockStyles.classes.box} ${styleName}`;
     }
 
     return (
-      <div className="grid-wrapper">
+      <div className={blockStyles.classes.wrapper}>
         <div className={blockStyles.classes.container}>
           {
             data.map((item, index) => {
@@ -133,7 +163,7 @@ class Grid extends React.Component {
 Grid.propTypes = {
   columns: PropTypes.number,
   rows: PropTypes.number,
-  height: PropTypes.number,
+  blocksize: PropTypes.number,
   padding: PropTypes.number,
   data: PropTypes.arrayOf(PropTypes.object)
 };

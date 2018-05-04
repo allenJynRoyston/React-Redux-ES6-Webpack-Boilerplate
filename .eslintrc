@@ -19,6 +19,7 @@
     "jsx-a11y/interactive-supports-focus": "off",
     "object-curly-spacing": "off",
     "object-curly-newline": "off",
+    "react/no-array-index-key": "off",
     "react/require-default-props": "off",
     "comma-dangle": "off",
     "spaced-comment": "off",

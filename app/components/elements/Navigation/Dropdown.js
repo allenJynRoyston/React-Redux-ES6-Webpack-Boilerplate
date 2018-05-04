@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 
-class NavElement extends React.Component {
+class Dropdown extends React.Component {
   render() {
     const listData = [
       { label: 'Home', location: '/' },
@@ -23,4 +23,4 @@ class NavElement extends React.Component {
   }
 }
 
-export default NavElement;
+export default Dropdown;

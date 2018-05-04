@@ -1,5 +1,5 @@
-export { default as Header } from './Header';
-export { default as Footer } from './Footer';
-export { default as NavElement } from './NavElement';
-export { default as TodoList } from './TodoList';
-export { default as Grid } from './Grid';
+export { default as Header } from './Header/Header';
+export { default as Footer } from './Footer/Footer';
+export { default as NavDropdown } from './Navigation/Dropdown';
+export { default as TodoList } from './Todo/List';
+export { default as Grid } from './Grid/Grid';

@@ -2,7 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 
-import Root from './config/Root';
+// routing
+import Routing from './config/Routing';
+
+// store
 import store from './store/config';
 
 
@@ -11,15 +14,15 @@ const render = (Component) => {
     <AppContainer store={store}>
       <Component />
     </AppContainer>,
-    document.getElementById('root'),
+    document.getElementById('app'),
   );
 };
 
-render(Root);
+render(Routing);
 
 if (module.hot) {
-  module.hot.accept('./config/Root', () => {
-    const newApp = require('./config/Root').default;
+  module.hot.accept('./config/Routing', () => {
+    const newApp = require('./config/Routing').default;
     render(newApp);
   });
 }
