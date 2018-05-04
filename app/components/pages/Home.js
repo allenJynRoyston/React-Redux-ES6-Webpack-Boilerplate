@@ -28,27 +28,22 @@ class Home extends React.Component {
   render() {
     let { title, dataSet1, dataSet2 } = this.state;
 
-    return (
-      <Fragment>
-        <Header />
-        <div className="container main-content">
-          <section className="hero">
-            <div className="hero-body">
-              <p className="title">
-                {title}
-              </p>
-              <p className="subtitle">
-                Everything you need to <strong>create a website</strong> with Bulma
-              </p>
-            </div>
-            <Grid columns={3} rows={3} blocksize={300} padding={1} data={dataSet1} />
-            <br />
-            <Grid columns={3} rows={3} blocksize={300} padding={1} data={dataSet2} />
-          </section>
-        </div>
-        <Footer />
-      </Fragment>
-    )
+    return pug`
+      Fragment
+      Header
+      .container.main-content
+        section.hero
+          .hero-body
+            p.title #{title}
+            p.subtitle
+            | Everything you need to 
+            strong create a website&nbsp;
+            | with Bulma
+        Grid(columns=3 rows=3 blocksize=300 padding=1 data=dataSet1)
+        br
+        Grid(columns=3 rows=3 blocksize=300 padding=1 data=dataSet2)
+      Footer  
+    `
   }
 }
 

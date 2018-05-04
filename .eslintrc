@@ -39,5 +39,8 @@
     "global-require": "off",
     "semi": "off",
     "arrow-body-style": "off"
+  },
+  "globals": {
+    "pug": true
   }
 }

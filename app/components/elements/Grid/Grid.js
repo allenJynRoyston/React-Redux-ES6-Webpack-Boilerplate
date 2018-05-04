@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 class Grid extends React.Component {
   constructor(props) {
     super(props);
-
+    console.log(this.props)
     // get props/prop defaults
     let {columns = 0, rows = 0, blocksize = 0, padding = 0, data = []} = this.props;
 

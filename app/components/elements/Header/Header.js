@@ -1,26 +1,22 @@
 import React from 'react';
 import { NavDropdown } from '../../elements'
 
+// images
 import mainLogo from '../../../assets/images/react-logo.png';
 
-
+// component
 class Header extends React.Component {
   render() {
-    return (
-      <nav className="navbar is-warning">     
-        <a href="/" className="navbar-item">
-          <img src={mainLogo} alt="Built with React" />
-        </a>           
-        <div className="navbar-item has-dropdown is-hoverable ">       
-          <a className="navbar-link">
-            Navigation       
-          </a>        
-          <div className="navbar-dropdown">          
-            <NavDropdown />           
-          </div>
-        </div>               
-      </nav>
-    )
+    return pug`
+      nav.navbar.is-warning
+        a.navbar-item(href="/")
+          img(src=mainLogo alt="Built with React")
+        .navbar-item.has-dropdown.is-hoverable
+          .navbar-link
+            | Navigation
+          .navbar-dropdown
+            NavDropdown
+    `
   }
 }
 
