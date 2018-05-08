@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Header, Footer, Grid } from '../elements'
+import { Header, Footer, Grid } from '../../elements'
 
 class Home extends React.Component {
   constructor(props) {

@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
-import { Header, Footer } from '../elements'
+import { Header, Footer, UserList, PhotoList } from '../../elements'
 
-class About extends React.Component {
+class Redux extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: 'About',
+      title: 'Redux',
     };
   }
 
@@ -23,9 +23,12 @@ class About extends React.Component {
               | Everything you need to 
               strong create a website&nbsp;
               | with Bulma
+          UserList
+          hr
+          PhotoList
         Footer              
     ` 
   }
 }
 
-export default About;
+export default Redux;

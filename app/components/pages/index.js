@@ -1,3 +1,4 @@
-export { default as Home } from './Home';
-export { default as About } from './About';
-export { default as Todo } from './Todo';
+export { default as Home } from './Home/Home';
+export { default as About } from './About/About';
+export { default as Todo } from './Todo/Todo';
+export { default as Redux } from './Redux/Redux';

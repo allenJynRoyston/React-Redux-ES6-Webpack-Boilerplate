@@ -1,17 +1,30 @@
 import React from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { Home, About, Todo } from '../components/pages';
 
-const Root = () => {
-  return (
-    <Router>
-      <Switch>
-        <Route path="/" component={Home} exact />
-        <Route path="/about" component={About} exact />
-        <Route path="/todo" component={Todo} exact />
-      </Switch>
-    </Router>
-  );
+class Root extends React.Component {
+  render() {
+    return pug`
+      Router
+        Switch
+          ${this.props.routes.map((link) => {
+            return pug`Route(key=${link.location} path=${link.location} component=${link.component} exact)`
+          })}
+  `
+  }
+}
+
+Root.propTypes = {
+  // property to be used by store
+  routes: PropTypes.array
 };
 
-export default Root;
+function mapStateToProps(state) {
+  return {
+    routes: state.routes // needs to match what's on allReducers
+  };
+}
+
+export default connect(mapStateToProps)(Root);

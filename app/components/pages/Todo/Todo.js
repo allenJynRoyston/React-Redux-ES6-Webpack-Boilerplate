@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Header, Footer, TodoList } from '../elements'
+import { Header, Footer, TodoList } from '../../elements'
 
 class Todo extends React.Component {
   constructor(props) {

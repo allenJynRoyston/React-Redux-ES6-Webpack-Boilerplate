@@ -1,18 +1,14 @@
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import PropTypes from 'prop-types';
 
 class Dropdown extends React.Component {
   render() {
-    const listData = [
-      { label: 'Home', location: '/' },
-      { label: 'About', location: '/about' },
-      { label: 'Todo', location: '/todo' },
-    ]
-
     return pug`
       Fragment
-        ${listData.map((link) => {
+        ${this.props.routes.map((link) => {
           return pug`Link.navbar-item(key=${link.label} to=${link.location}) ${link.label}`
         })}
         hr.nav-bar-divider
@@ -21,4 +17,16 @@ class Dropdown extends React.Component {
   }
 }
 
-export default Dropdown;
+Dropdown.propTypes = {
+  // property to be used by store
+  routes: PropTypes.array
+};
+
+function mapStateToProps(state) {
+  return {
+    routes: state.routes // needs to match what's on allReducers
+  };
+}
+
+export default connect(mapStateToProps)(Dropdown);
+
