@@ -1,4 +1,4 @@
-# React/ES6/Webpack Boilerplate
+# React+Redux/ES6/Pug/Webpack Boilerplate
 
 This is a heavily modified repo based off Kliment Petrov's excellent work (which can be found [here](https://github.com/KleoPetroff/react-webpack-boilerplate)), but heavily restructured to be easier to read and understand.  I prefer Vue over React for its readability, structure and syntax and tried to impose that order on this boilerplate.  
 
