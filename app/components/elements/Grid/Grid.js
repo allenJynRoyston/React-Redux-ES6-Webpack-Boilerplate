@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 class Grid extends React.Component {
   constructor(props) {
     super(props);
-    console.log(this.props)
+
     // get props/prop defaults
     let {columns = 0, rows = 0, blocksize = 0, padding = 0, data = []} = this.props;
 
@@ -84,7 +84,8 @@ class Grid extends React.Component {
       // add to DOM
       style.appendChild(document.createTextNode(rtStylesheet));      
       document.head.appendChild(style);     
-      style.sheet.classes = classes;             
+      style.sheet.classes = classes;
+       
       return style.sheet;
     })();
         
@@ -102,7 +103,7 @@ class Grid extends React.Component {
     let setGridSize = (ele, index) => {      
       let styleName = `__${blockStyles.classes.randomId}_block_${index}`;
       let style; 
-      
+
       // for desktop
       style = `
         .${styleName} { 
@@ -110,7 +111,7 @@ class Grid extends React.Component {
           grid-row: ${ele.location.row}/ ${(ele.location.row + ele.size)}; 
         }
       `
-      blockStyles.insertRule(`${style}`, blockStyles.rules.length);
+      blockStyles.insertRule(`${style}`, blockStyles.cssRules.length);
       
       // for tablet
       style = `
@@ -122,7 +123,7 @@ class Grid extends React.Component {
           }
         }
       `
-      blockStyles.insertRule(`${style}`, blockStyles.rules.length);
+      blockStyles.insertRule(`${style}`, blockStyles.cssRules.length);
 
       // for mobile
       style = `
@@ -134,29 +135,23 @@ class Grid extends React.Component {
         }
       }
       `
-      blockStyles.insertRule(`${style}`, blockStyles.rules.length);
+      blockStyles.insertRule(`${style}`, blockStyles.cssRules.length);
 
       return `${blockStyles.classes.box} ${styleName}`;
     }
 
-    return (
-      <div className={blockStyles.classes.wrapper}>
-        <div className={blockStyles.classes.container}>
-          {
-            data.map((item, index) => {
-              item.key = `list_id_${index}`;            
-              return (
-                <div key={item.key} className={setGridSize(item, index)}>
-                  <div className={blockStyles.classes.inside}>
-                    {index + 1}
-                  </div>
-                </div>              
-              )
-            })
-          }
-        </div> 
-      </div>     
-    )
+    return pug`
+    div(class=${blockStyles.classes.wrapper})
+      div(class=${blockStyles.classes.container})
+        ${data.map((item, index) => {
+          item.key = `list_id_${index}`;
+          return pug`
+            div(key=${item.key} class=${setGridSize(item, index)})
+              div(class=${blockStyles.classes.inside})
+                p ${index + 1}
+          `
+          })}
+    `
   }
 }
 

@@ -9,17 +9,15 @@ class Dropdown extends React.Component {
       { label: 'About', location: '/about' },
       { label: 'Todo', location: '/todo' },
     ]
-    return (
-      <Fragment>    
-        {listData.map((link) => {
-          return <Link key={link.label} className="navbar-item" to={link.location}>{link.label}</Link>
+
+    return pug`
+      Fragment
+        ${listData.map((link) => {
+          return pug`Link.navbar-item(key=${link.label} to=${link.location}) ${link.label}`
         })}
-        <hr className="navbar-divider" />
-        <a className="navbar-item">
-          Version 0.1
-        </a>        
-      </Fragment>
-    )
+        hr.nav-bar-divider
+        a.navbar-item Version 0.1    
+    `
   }
 }
 
