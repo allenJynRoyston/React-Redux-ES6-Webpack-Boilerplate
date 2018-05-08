@@ -3,7 +3,6 @@
 This is a heavily modified repo based off Kliment Petrov's excellent work (which can be found [here](https://github.com/KleoPetroff/react-webpack-boilerplate)), but heavily restructured to be easier to read and understand.  I prefer Vue over React for its readability, structure and syntax and tried to impose that order on this boilerplate.  
 
 This repo includes the same as stuff included in Petrov's build, namely: 
-
 - [x] React 16.3.2
 - [x] ECMAScript 6 and JSX support
 - [x] React Router v4
@@ -17,11 +16,9 @@ This repo includes the same as stuff included in Petrov's build, namely:
 - [x] Automatic HTML generation
 - [x] Production Config
 - [x] Custom Babel Preset with Decorators, Class Properties, Rest/Spread operator support
-- [x] Export Separate Vendor Files
 
 
 In addition: 
-
 - [x] Redux 4.x added
 - [x] Pug added
 - [x] Express 4 Support
