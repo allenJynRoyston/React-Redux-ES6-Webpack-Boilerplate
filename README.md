@@ -19,10 +19,14 @@ This repo includes the same as stuff included in Petrov's build, namely:
 - [x] Custom Babel Preset with Decorators, Class Properties, Rest/Spread operator support
 - [x] Export Separate Vendor Files
 
+
 In addition: 
 
+- [x] Redux 4.x added
+- [x] Pug added
 - [x] Express 4 Support
 - [x] Demo components
+- [x] Reduced complexity for easy learning
 - [x] Bulma CSS (can remove or replace easily)
 
 ## Preview
@@ -39,11 +43,12 @@ In addition:
 
 ## Starting the dev server
 ```sh
-$ npm run start
+$ npm run dev
 ```
 
 ## Build and Preview
 ```sh
 $ npm run production
 $ gulp 
+// open browser, go to:  http://localhost:3030/
 ```
