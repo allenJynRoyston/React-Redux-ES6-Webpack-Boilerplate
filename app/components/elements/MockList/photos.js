@@ -35,7 +35,7 @@ photoList.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    listOfPhotos: state.photoData // needs to match what's on allReducers
+    listOfPhotos: state.photoData // needs to match what's on reducers/allReducers.js
   };
 }
 

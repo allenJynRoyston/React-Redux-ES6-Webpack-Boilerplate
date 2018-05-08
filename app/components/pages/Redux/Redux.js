@@ -19,10 +19,6 @@ class Redux extends React.Component {
           section.hero
             .hero-body
               p.title #{title}
-              p.subtitle
-              | Everything you need to 
-              strong create a website&nbsp;
-              | with Bulma
           UserList
           hr
           PhotoList

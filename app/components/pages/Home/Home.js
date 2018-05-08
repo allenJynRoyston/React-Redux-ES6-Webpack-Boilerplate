@@ -35,10 +35,6 @@ class Home extends React.Component {
         section.hero
           .hero-body
             p.title #{title}
-            p.subtitle
-            | Everything you need to 
-            strong create a website&nbsp;
-            | with Bulma
         Grid(columns=3 rows=3 blocksize=300 padding=1 data=dataSet1)
         br
         Grid(columns=3 rows=3 blocksize=300 padding=1 data=dataSet2)
