@@ -36,6 +36,7 @@
     }
   },
   "dependencies": {
+    "animejs": "^2.2.0",
     "browser-sync": "^2.24.4",
     "compression": "^1.7.2",
     "copy-webpack-plugin": "4.5.1",

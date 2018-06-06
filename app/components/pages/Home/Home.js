@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Header, Footer, Grid } from '../../elements'
+import { Header, Footer, Grid, MegaMenu } from '../../elements'
 
 class Home extends React.Component {
   constructor(props) {
@@ -30,15 +30,16 @@ class Home extends React.Component {
 
     return pug`
       Fragment
-      Header
-      .container.main-content
-        section.hero
-          .hero-body
-            p.title #{title}
-        Grid(columns=3 rows=3 blocksize=300 padding=1 data=dataSet1)
-        br
-        Grid(columns=3 rows=3 blocksize=300 padding=1 data=dataSet2)
-      Footer  
+        MegaMenu
+        Header
+        .container.main-content
+          section.hero
+            .hero-body
+              p.title #{title}
+          Grid(columns=3 rows=3 blocksize=300 padding=1 data=dataSet1)
+          br
+          Grid(columns=3 rows=3 blocksize=300 padding=1 data=dataSet2)
+        Footer  
     `
   }
 }

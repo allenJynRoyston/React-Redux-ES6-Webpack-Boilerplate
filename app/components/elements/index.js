@@ -7,3 +7,4 @@ export { default as UserList } from './MockList/users';
 export { default as PhotoList } from './MockList/photos';
 export { default as PixiDemo } from './PixiDemo/pixiDemo';
 export { default as PixiShape } from './PixiDemo/shape';
+export { default as MegaMenu } from './Megamenu/megamenu';

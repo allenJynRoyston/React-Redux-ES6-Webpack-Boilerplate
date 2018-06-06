@@ -1,0 +1,8 @@
+@import url(./normalize.css);
+@import url(./bulma.css);
+@import url(./custom.css);
+.container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
