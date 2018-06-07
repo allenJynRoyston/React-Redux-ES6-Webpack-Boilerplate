@@ -10,81 +10,31 @@ import mainLogo from '../../../assets/images/react-logo.png';
 class megaMenu extends React.Component {
     constructor() {
       super()
+
       // This binding is necessary to make `this` work in the callback
       this.checkDrawerState = this.checkDrawerState.bind(this);
       this.activeSetOnClick = this.activeSetOnClick.bind(this);
 
-      // TODO: convert into props
-      // slide lists 
-      let list1 = [
-        {title: 'ITEM 1A'},
-        {title: 'ITEM 2A'},
-        {title: 'ITEM 3A'},
-      ] 
-
-      let list2 = [
-        {title: 'ITEM 1B'},
-        {title: 'ITEM 2B'},
-        {title: 'ITEM 3B'},
-        {title: 'ITEM 4B'},
-        {title: 'ITEM 5B'},
-      ]
-
-      let list3 = [
-        {title: 'ITEM 1C', do: () => { console.log('do something') }},
-        {title: 'ITEM 2C', do: () => { console.log('do something') }},
-        {title: 'ITEM 3C', do: () => { console.log('do something') }},
-        {title: 'ITEM 4C', do: () => { console.log('do something') }},
-      ] 
-
-      // map keypress rules and list properties
-      let matrixId = 0
-      list1.map((item, index) => {        
-        item.id = matrixId;        
-        item.active = (index === 0);
-        item.onDown = (index === list1.length - 1 ? list1.length - 1 : matrixId + 1)
-        item.onRight = (list2.length > index ? list1.length + matrixId : null)
-        item.onLeft = null
-        item.onUp = (index === 0 ? 0 : matrixId - 1) 
-        item.area = {self: 0, right: 1, left: 0};
-        matrixId++;
-        return item
-      })
-
-      list2.map((item, index) => {        
-        item.id = matrixId;        
-        item.active = false
-        item.onDown = (index === list2.length - 1 ? null : matrixId + 1)
-        item.onUp = (index === 0 ? null : matrixId - 1)                
-        item.onLeft = (index >= list1.length ? null : matrixId - list1.length)        
-        item.onRight = (index >= list3.length ? null : matrixId + list2.length)        
-        item.area = {self: 1, right: 2, left: 0};
-        matrixId++;
-        return item
-      })
-      list3.map((item, index) => {      
-        item.id = matrixId;        
-        item.active = false
-        item.onDown = (index === list3.length - 1 ? null : matrixId + 1)
-        item.onUp = (index === 0 ? null : matrixId - 1)                
-        item.onLeft = (index >= list2.length ? null : matrixId - list2.length)        
-        item.onRight = null
-        item.area = {self: 2, right: 2, left: 1};
-        matrixId++;
-        return item
-      })   
-
-      // component state
-      this.state = {
-        selected: 0,
-        selectedMax: matrixId,
-        currentSlide: 1,
+      // this is how many layers are available for menus
+      let menuList = {
+        0: [],
+        1: [],
+        2: [],
+        3: [],
+        4: []
+      }
+            
+      // // component state
+      this.state = {   
+        numberOfSlides: [0, 1, 2, 3, 4],             
         clickLock: false,
         isOpen: false,
-        searchList: [...list1, ...list2, ...list3],
-        lists: [list1, list2, list3]   
-      }
+        menuList  
+      }      
+    }
 
+    componentDidMount() {
+      // bind keydown 
       document.onkeydown = (evt) => { 
         evt.preventDefault();
         let key = null;        
@@ -118,71 +68,238 @@ class megaMenu extends React.Component {
           break
         }
         this.keyPressLogic(key)     
-      };       
+      }; 
+      
+      // dummy data
+      let data = [
+        { 
+          text: '1A', 
+          leads: [
+            {
+              text: '_1A', 
+              leads: [
+                {text: '__1A', 
+                  leads: [
+                    {
+                      text: '___1A', 
+                      leads: [
+                        {text: '____1A'},
+                        {text: '____2A'},
+                        {text: '____3A'},
+                        {text: '____4A'},
+                      ]
+                    },
+                    {text: '___2A'},
+                  ]
+                },
+                {text: '__2A'},
+                {text: '__3A'},
+                {text: '__4A'},
+                {text: '__5A'},
+              ]
+            },
+            {
+              text: '_1B', 
+              leads: [
+                {text: '__1B'},
+              ]
+            },
+            {
+              text: '_1C', 
+              leads: [
+                {text: '__1C'},
+              ]
+            }            
+          ]
+        },
+        { 
+          text: '2A', 
+          leads: [
+            {
+              text: '_2A', 
+              leads: [
+                {text: '__2A'}
+              ]
+            }
+          ]
+        }        
+      ]        
+      
+      // build initial menu
+      this.buildInitial(data)
+      // then hide from view until ready
+      this.closeDrawer();
     }
 
-    componentDidMount() {
-      this.closeAll();
+    buildInitial(data) {
+      let {menuList} = this.state                
+      menuList[0] = data;
+      menuList[0].map((item) => {
+        item.tier = 0
+        return item;
+      })
+      this.setState({menuList})    
+
+      // build the first tier and setup matrix
+      this.buildList(menuList[0], 1)
+    }
+    
+    buildList(data, index) {     
+      let {menuList} = this.state    
+      if (!!data.leads) {
+        menuList[index] = data.leads;      
+      } else {
+        menuList[index] = []
+      }
+      menuList[index].map((item) => {
+        item.tier = index
+        return item;
+      })            
+      this.setState({menuList})
+      this.buildMatrix();
     }
 
+    buildMatrix() {
+      let {menuList, numberOfSlides} = this.state;
+
+      let id = 0;       
+      numberOfSlides.forEach((val) => {
+        let order = 0;
+        menuList[val].map((item, index) => {        
+          item.id = id
+          item.order = order                      
+          if (item.active === undefined) {
+            item.active = (val === 0 && index === 0)      
+          }
+          id++
+          order++
+          return item
+        })
+      })
+
+      numberOfSlides.forEach((val) => {
+        menuList[val].map((item, index) => {
+          // get items on left
+          let l = (val - 1) < 0 ? null : (val - 1)          
+          item.onLeft = null;
+          if (l !== null) {            
+            item.onLeft = (!!menuList[l][index]) ? menuList[l][index].id : null
+          }          
+
+          // get items on right
+          let r = (val + 1) >= numberOfSlides.length ? null : (val + 1)        
+          item.onRight = null;
+          if (r !== null) {            
+            item.onRight = (!!menuList[r][index]) ? menuList[r][index].id : null
+          }  
+          
+          // get items on up   
+          let u = menuList[val][index - 1]       
+          item.onUp = u === undefined ? null : u.id;
+
+          // get items on down   
+          let d = menuList[val][index + 1]       
+          item.onDown = d === undefined ? null : d.id;          
+          return item
+        })
+      })
+      
+      this.setState({menuList})
+    }
+
+    findItemOnId(id) {
+      let {menuList, numberOfSlides} = this.state;      
+      let result = null
+      numberOfSlides.forEach((val) => {
+        let order = 0;
+        menuList[val].map((item, index) => {            
+          if (item.id === id) {
+            result = item
+            return item
+          }
+          return null
+        })          
+      })
+      return result;
+    }
+
+    resetActive(setToDefault = false) {
+      let {menuList, numberOfSlides} = this.state      
+      // clear all actives
+      numberOfSlides.forEach((val) => {
+        let order = 0;
+        menuList[val].map((item, index) => {    
+          item.active = false
+          return item
+        })
+      })   
+      // set first item to active by default (used for reset)
+      if (setToDefault) {
+        menuList[0][0].active = true
+        this.setState({menuList})
+      }
+    }
+
+    makeActive(tier, order) {
+      this.resetActive() 
+      let {menuList} = this.state;
+      menuList[tier][order].active = true;
+      this.setState({menuList})
+    }
 
     keyPressLogic(key) {
+      let {menuList, numberOfSlides} = this.state;
       if (this.state.isOpen) {
-        let {selected, searchList, currentSlide} = this.state;
-        let c;
+        // find item that has the active flag        
+        let activeItem = []
+        numberOfSlides.forEach((val) => {
+          let order = 0;
+          menuList[val].map((item, index) => {  
+            if (item.active) {
+              activeItem = item
+            }
+            return item.active
+          })          
+        })
+        
         switch (key) {
           case 'ENTER': 
-            this.openSlide(currentSlide + 1)
+            this.activeSetOnClick(activeItem)
           break     
           case 'BACK':             
-            this.closeAll();
+            this.closeDrawer();
           break                      
           case 'TAB': 
-            c = searchList.filter((item) => {
-              return item.id === selected
-            })        
-            if (c[0].onDown !== null) {
-              this.setState({selected: c[0].onDown})
-              this.makeActive(c[0].area.self)
-            }    
+            // c = searchList.filter((item) => {
+            //   return item.id === selected
+            // })        
+            // if (c[0].onDown !== null) {
+            //   this.setState({selected: c[0].onDown})
+            //   this.makeActive(c[0].area.self)
+            // }    
           break      
-          case 'DOWN': 
-            c = searchList.filter((item) => {
-              return item.id === selected
-            })        
-            if (c[0].onDown !== null) {
-              this.setState({selected: c[0].onDown})
-              this.makeActive(c[0].area.self)
+          case 'DOWN':             
+            if (activeItem.onDown !== null) {
+              let i = this.findItemOnId(activeItem.onDown)
+              this.makeActive(i.tier, i.order)              
             }
           break
           case 'UP': 
-            c = searchList.filter((item) => {
-              return item.id === selected
-            })        
-            if (c[0].onUp !== null) {
-              this.setState({selected: c[0].onUp})
-              this.makeActive(c[0].area.self)
+            if (activeItem.onUp !== null) {
+              let i = this.findItemOnId(activeItem.onUp)
+              this.makeActive(i.tier, i.order)              
             }
           break   
           case 'RIGHT': 
-            c = searchList.filter((item) => {
-              return item.id === selected
-            })        
-            if (c[0].onRight !== null) {
-              this.setState({selected: c[0].onRight})
-              this.makeActive(c[0].area.right)
-              if (c[0].area.right >= currentSlide) {
-                this.openSlide(c[0].area.right + 1)
-              }              
+            if (activeItem.onRight !== null) {
+              let i = this.findItemOnId(activeItem.onRight)
+              this.makeActive(i.tier, i.order)              
             }
           break    
           case 'LEFT': 
-            c = searchList.filter((item) => {
-              return item.id === selected
-            })        
-            if (c[0].onLeft !== null) {
-              this.setState({selected: c[0].onLeft})
-              this.makeActive(c[0].area.left)
+            if (activeItem.onLeft !== null) {
+              let i = this.findItemOnId(activeItem.onLeft)
+              this.makeActive(i.tier, i.order)              
             }
           break                              
           default:
@@ -190,84 +307,56 @@ class megaMenu extends React.Component {
       }
     }
 
-    activeSetOnClick(area, index, openSlide) {
-      let {lists, currentSlide} = this.state;
-      this.setState({selected: lists[area][index].id})
-      setTimeout(() => {        
-        this.makeActive(area)  
-        if (openSlide !== null) {
-          this.openSlide(openSlide)   
-        }
-      })
-    }
+    activeSetOnClick(_item) {  
+      let {menuList} = this.state
+      // build next tier
+      this.buildList(_item, _item.tier + 1)    
 
-    resetActive() {
-      let {lists} = this.state;
-      lists.map((list) => {
-        return list.forEach((item) => {
-          item.active = false
-        })
-      })      
-    }
+      // clear all actives
+      this.resetActive()
 
-    makeActive(cell) {      
-      let {selected, lists, currentSlide} = this.state;      
-      this.resetActive();
-      lists[cell].filter((item) => {        
-        if (selected === item.id) { item.active = true }
-        return item
-      })
-      this.setState({lists})
+      // set item to active state
+      _item.active = true;
+
+      // open/close next slides
+      if (!!_item.leads && _item.leads.length > 0) {        
+        this.openSlide(_item.tier + 1)    
+      } else {
+        this.closeSlide(_item.tier + 1)
+      }    
     }
 
     checkDrawerState() {
+      // if drawer is closed and unlocked, open it and vice versa
       if (!this.state.clickLock) {      
         this.setState(prevState => ({
           isOpen: !prevState.isOpen,
           clickLock: true
         }));
-
         if (this.state.isOpen) {
-          this.closeAll()
-        } else {
-          // turn on first one by default
-          this.state.lists[0][0].active = true
+          this.closeDrawer()
+        } else {                    
           this.openDrawer()
+          // hide the scroll bar
+          let el = document.getElementsByTagName('html')[0];
+          el.style.overflow = 'hidden';          
         }
       }
-
-      let el = document.getElementsByTagName('html')[0];
-      el.style.overflow = 'hidden';
     }
 
-    closeAll() { 
-      this.resetActive()   
-      
+    closeDrawer() { 
       anime({
         targets: '.mm-container',
         translateX: ('-100%'),
         duration: 0
-      })
-      anime({
-        targets: '.mm-container .slide-1',
-        translateX: ('-100%'),
-        duration: 0
-      })
-      anime({
-        targets: '.mm-container .slide-2',
-        translateX: ('-200%'),
-        duration: 0
-      })        
-      anime({
-        targets: '.mm-container .slide-3',
-        translateX: ('-300%'),
-        duration: 0,
-        complete: () => {
-          let el = document.getElementsByTagName('html')[0];
-          el.style.overflow = 'auto';            
-          this.setState({ clickLock: false, isOpen: false, selected: 0}); 
-        }
-      });      
+      })      
+      this.resetActive(true);
+      this.closeAllSlides();
+      this.setState({ clickLock: false, isOpen: false});       
+
+      // reveal the scroll bar
+      let el = document.getElementsByTagName('html')[0];
+      el.style.overflow = 'auto';                  
     }
 
     openDrawer() {
@@ -278,27 +367,17 @@ class megaMenu extends React.Component {
           easing: 'easeInOutQuad',
           duration: 0 
         })  
-      this.openSlide(1)
+      this.openSlide(0)
     }
 
     openSlide(value) {     
-      this.setState({currentSlide: value})
-
-      for (let i = value; i <= 3; i++) {
-        anime.timeline()
-        .add({
-          targets: `.mm-container .slide-${i}`,
-          translateX: (`${i * -100}%`),
-          duration: 0,       
-        })     
-      }
-    
+      this.closeAllSlides(value);
       anime.timeline()
         .add({
           targets: `.mm-container .slide-${value}`,
           easing: 'easeInOutQuad',
           translateX: ('0%'),
-          duration: 200,
+          duration: 400,          
           complete: () => {
             this.setState(prevState => ({ clickLock: false }));             
           }            
@@ -306,60 +385,73 @@ class megaMenu extends React.Component {
     }
 
     closeSlide(value) {     
-        for (let i = value + 1; i <= 3; i++) {
+        let {numberOfSlides} = this.state
+        numberOfSlides.forEach((i) => {
           anime.timeline()
-          .add({
-            targets: `.mm-container .slide-${i}`,
-            translateX: (`${i * -100}%`),
-            duration: 0,       
-          })     
-        }
-
-        anime({
-          targets: `.mm-container .slide-${value}`,
-          easing: 'easeInOutQuad',
-          translateX: (`${value * -100}%`),
-          duration: 200         
-        })       
+            .add({
+              targets: `.mm-container .slide-${i}`,
+              translateX: (`${i * -100}%`),
+              duration: 0,       
+            })     
+        })
     }
 
-    render() {   
-      let { lists, isOpen } = this.state      
+    closeAllSlides(startAt = 0) {
+      let {numberOfSlides} = this.state
+      for (let i = startAt; i <= numberOfSlides.length; i++) {        
+        anime({
+          targets: `.mm-container .slide-${i}`,
+          translateX: (`${(i + 1) * -100}%`),
+          duration: 0,       
+        })     
+      }      
+    }
+
+    render() {
+      let { menuList, isOpen } = this.state 
       return pug`
-        div(onKeyDown=${() => this.checkKeyPress()})
-          a.mm-trigger(role="button" onClick=${this.checkDrawerState} )
-            p ${isOpen ? 'close' : 'open'}
-          .mm-container
-            .mm-back-slide( onClick=${this.checkDrawerState} )
-            .mm-slide.slide-1
-              ${lists[0].map((item, index) => {
-                item.key = `list_id_${index}`;
-                return pug`
-                  a(role="button" key=${item.key} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(0, index, 2)} ) ${item.title} ${item.active}      
-                    br
-                `
-                })}
-              // a(onClick=${(() => this.closeAll())}) Close
-            .mm-slide.slide-2
-              ${lists[1].map((item, index) => {
-                item.key = `list_id_${index}`;
-                return pug`
-                  a(role="button" key=${item.key} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(1, index, 3)}) ${item.title} ${item.active}      
-                    br
-                `
-                })}
-              // a(onClick=${(() => this.closeSlide(2))}) Back
-            .mm-slide.slide-3              
-              ${lists[2].map((item, index) => {
-                item.key = `list_id_${index}`;
-                return pug`
-                  a(role="button" key=${item.key} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(2, index, null)}) ${item.title} ${item.active}         
-                    br
-                `
+      div(onKeyDown=${() => this.checkKeyPress()})
+        a.mm-trigger(role="button" onClick=${this.checkDrawerState} )
+          p ${isOpen ? 'close' : 'open'}
+        .mm-container
+          .mm-back-slide( onClick=${this.checkDrawerState} )
+          .mm-slide.slide-0
+            ${menuList[0].map((item, index) => {                            
+              return pug`
+                a(role="button" key=${item.text} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(item)} ) ${item.text} ${item.active}      
+                  br
+              `
               })}
-              // a(onClick=${(() => this.closeSlide(3))}) Back
+          .mm-slide.slide-1
+            ${menuList[1].map((item, index) => {     
+              return pug`
+                a(role="button" key=${item.text} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(item)} ) ${item.text} ${item.active}      
+                  br
+              `
+            })}
+          .mm-slide.slide-2
+            ${menuList[2].map((item, index) => {
+              return pug`
+                a(role="button" key=${item.text} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(item)} ) ${item.text} ${item.active}      
+                  br
+              `
+            })}
+          .mm-slide.slide-3      
+            ${menuList[3].map((item, index) => {   
+              return pug`
+                a(role="button" key=${item.text} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(item)} ) ${item.text} ${item.active}      
+                  br
+              `
+            })}
+          .mm-slide.slide-4
+            ${menuList[4].map((item, index) => {  
+              return pug`
+                a(role="button" key=${item.text} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(item)} ) ${item.text} ${item.active}      
+                  br
+              `
+            })}
       `
-    }     
+    }
 }
 
 megaMenu.propTypes = {
