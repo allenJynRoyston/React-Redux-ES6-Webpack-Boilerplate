@@ -14,6 +14,7 @@
     "es6": true
   },
   "rules": {
+    "no-lonely-if": "off",
     "no-extra-boolean-cast": "off",
     "no-case-declarations": "off",
     "no-nested-ternary": "off",

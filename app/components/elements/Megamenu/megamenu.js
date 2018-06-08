@@ -8,12 +8,14 @@ import styles from './megamenu.css';
 import mainLogo from '../../../assets/images/react-logo.png';
 
 class megaMenu extends React.Component {
-    constructor() {
-      super()
+    constructor(props) {
+      super(props)
+      // get props
+      let {data = []} = this.props;
 
       // This binding is necessary to make `this` work in the callback
       this.checkDrawerState = this.checkDrawerState.bind(this);
-      this.activeSetOnClick = this.activeSetOnClick.bind(this);
+      this.activeNextSlide = this.activeNextSlide.bind(this);
 
       // this is how many layers are available for menus
       let menuList = {
@@ -28,17 +30,33 @@ class megaMenu extends React.Component {
       this.state = {   
         numberOfSlides: [0, 1, 2, 3, 4],             
         clickLock: false,
+        shiftDown: false,
         isOpen: false,
-        menuList  
+        menuList,
+        data
       }      
     }
 
     componentDidMount() {
       // bind keydown 
-      document.onkeydown = (evt) => { 
+      document.onkeyup = (evt) => { 
         evt.preventDefault();
         let key = null;        
         switch (evt.keyCode) {          
+          case 16:
+            this.setState({shiftDown: false})   
+          break   
+          default:
+        }
+      }
+
+      document.onkeydown = (evt) => { 
+        evt.preventDefault();
+        let key = null;        
+        switch (evt.keyCode) {    
+          case 16:
+            this.setState({shiftDown: true})   
+          break   
           case 37:
             key = 'LEFT'
           break
@@ -57,8 +75,8 @@ class megaMenu extends React.Component {
           case 9:
             key = 'TAB'
           break  
-          case 27:
-            key = 'BACK'
+          case 27:            
+            key = 'ESC'
           break                                        
           case 8:
             key = 'BACK'
@@ -70,63 +88,9 @@ class megaMenu extends React.Component {
         this.keyPressLogic(key)     
       }; 
       
-      // dummy data
-      let data = [
-        { 
-          text: '1A', 
-          leads: [
-            {
-              text: '_1A', 
-              leads: [
-                {text: '__1A', 
-                  leads: [
-                    {
-                      text: '___1A', 
-                      leads: [
-                        {text: '____1A'},
-                        {text: '____2A'},
-                        {text: '____3A'},
-                        {text: '____4A'},
-                      ]
-                    },
-                    {text: '___2A'},
-                  ]
-                },
-                {text: '__2A'},
-                {text: '__3A'},
-                {text: '__4A'},
-                {text: '__5A'},
-              ]
-            },
-            {
-              text: '_1B', 
-              leads: [
-                {text: '__1B'},
-              ]
-            },
-            {
-              text: '_1C', 
-              leads: [
-                {text: '__1C'},
-              ]
-            }            
-          ]
-        },
-        { 
-          text: '2A', 
-          leads: [
-            {
-              text: '_2A', 
-              leads: [
-                {text: '__2A'}
-              ]
-            }
-          ]
-        }        
-      ]        
-      
       // build initial menu
-      this.buildInitial(data)
+      this.buildInitial(this.state.data)
+      
       // then hide from view until ready
       this.closeDrawer();
     }
@@ -145,23 +109,40 @@ class megaMenu extends React.Component {
     }
     
     buildList(data, index) {     
-      let {menuList} = this.state    
+      let {menuList, numberOfSlides} = this.state    
+      // build menuList data
       if (!!data.leads) {
         menuList[index] = data.leads;      
       } else {
         menuList[index] = []
       }
+      // map tier data
       menuList[index].map((item) => {
         item.tier = index
         return item;
-      })            
+      })     
+      
+      // remove data thats unused
+      for (let i = index + 1; i < numberOfSlides.length; i++) {
+        menuList[i] = []
+      }
+      
+      // add back property
+      let hasBackCheck = menuList[index].filter((item) => {
+        return !!item.goBack
+      })        
+      if (hasBackCheck.length === 0) {
+        menuList[index].push({text: 'BACK', tier: index, goBack: true})      
+      }
+
+      
+      // set state
       this.setState({menuList})
       this.buildMatrix();
     }
 
     buildMatrix() {
       let {menuList, numberOfSlides} = this.state;
-
       let id = 0;       
       numberOfSlides.forEach((val) => {
         let order = 0;
@@ -177,8 +158,12 @@ class megaMenu extends React.Component {
         })
       })
 
+      // map key logic
       numberOfSlides.forEach((val) => {
         menuList[val].map((item, index) => {
+          // onclick default 
+          //item.do = () => { console.log('do something') }
+ 
           // get items on left
           let l = (val - 1) < 0 ? null : (val - 1)          
           item.onLeft = null;
@@ -247,36 +232,106 @@ class megaMenu extends React.Component {
       this.setState({menuList})
     }
 
-    keyPressLogic(key) {
+    findLastListItem() {
       let {menuList, numberOfSlides} = this.state;
+      let lastItem = []
+      numberOfSlides.forEach((val) => {
+        let order = 0;
+        menuList[val].map((item, index) => {  
+          lastItem = item
+          return null
+        })          
+      })   
+      return lastItem;
+    }
+
+    findActiveItem() {
+      let {menuList, numberOfSlides} = this.state;
+      let activeItem = []
+      let total = -1;
+      numberOfSlides.forEach((val) => {
+        let order = 0;
+        menuList[val].map((item, index) => {  
+          total++;
+          if (item.active) {
+            activeItem = item
+          }
+          return null
+        })          
+      })   
+      return {activeItem, total}
+    }
+
+    findFirstItemInLastTier() {
+      let {menuList, numberOfSlides} = this.state;
+      let firstItem = [];
+      numberOfSlides.forEach((val) => {
+        menuList[val].map((item, index) => {          
+          if (item.order === 0) {
+            firstItem = item
+          }
+          return null
+        })          
+      })   
+      return firstItem;
+    }
+
+    makeActiveViaId(id) {
+      let {menuList, numberOfSlides} = this.state;
+      let qItem = []
+      numberOfSlides.forEach((val) => {
+        menuList[val].map((item, index) => {  
+          if (item.id === id) {
+            qItem = item
+          }
+          return null
+        })          
+      })           
+      this.makeActive(qItem.tier, qItem.order)
+    }    
+
+    closeLastSlide() {            
+      if (this.findFirstItemInLastTier().tier > 0) {
+        // close last slide if not the last one
+        // first close the last open slide
+        let lastItem = this.findLastListItem()            
+        this.closeSlide(lastItem.tier - 1)
+
+        // then make active the first item on the last open slide      
+        this.makeActiveViaId(this.findFirstItemInLastTier().id)      
+      } else {
+        // otherwise close all 
+        this.closeDrawer()
+      }
+    }
+
+    keyPressLogic(key) {
+      let {menuList, numberOfSlides, shiftDown} = this.state;
       if (this.state.isOpen) {
         // find item that has the active flag        
-        let activeItem = []
-        numberOfSlides.forEach((val) => {
-          let order = 0;
-          menuList[val].map((item, index) => {  
-            if (item.active) {
-              activeItem = item
-            }
-            return item.active
-          })          
-        })
+        let {activeItem, total} = this.findActiveItem();
         
         switch (key) {
           case 'ENTER': 
-            this.activeSetOnClick(activeItem)
+            this.activeNextSlide(activeItem)
           break     
-          case 'BACK':             
+          case 'ESC':             
             this.closeDrawer();
-          break                      
+          break 
+          case 'BACK':             
+            this.closeLastSlide();
+          break                                
           case 'TAB': 
-            // c = searchList.filter((item) => {
-            //   return item.id === selected
-            // })        
-            // if (c[0].onDown !== null) {
-            //   this.setState({selected: c[0].onDown})
-            //   this.makeActive(c[0].area.self)
-            // }    
+            let next = shiftDown ? activeItem.id - 1 : activeItem.id + 1 
+            if (!shiftDown) {            
+              if (next <= total) {
+                this.makeActiveViaId(next)            
+              }
+            } else {
+              if (next >= 0) {                
+                this.makeActiveViaId(next)            
+              }       
+            }                   
           break      
           case 'DOWN':             
             if (activeItem.onDown !== null) {
@@ -293,13 +348,17 @@ class megaMenu extends React.Component {
           case 'RIGHT': 
             if (activeItem.onRight !== null) {
               let i = this.findItemOnId(activeItem.onRight)
-              this.makeActive(i.tier, i.order)              
+              if (!!i) {
+                this.makeActive(i.tier, i.order)              
+              }
             }
           break    
           case 'LEFT': 
             if (activeItem.onLeft !== null) {
               let i = this.findItemOnId(activeItem.onLeft)
-              this.makeActive(i.tier, i.order)              
+              if (!!i) {
+                this.makeActive(i.tier, i.order)              
+              }
             }
           break                              
           default:
@@ -307,7 +366,7 @@ class megaMenu extends React.Component {
       }
     }
 
-    activeSetOnClick(_item) {  
+    activeNextSlide(_item) {  
       let {menuList} = this.state
       // build next tier
       this.buildList(_item, _item.tier + 1)    
@@ -318,12 +377,26 @@ class megaMenu extends React.Component {
       // set item to active state
       _item.active = true;
 
+
       // open/close next slides
       if (!!_item.leads && _item.leads.length > 0) {        
         this.openSlide(_item.tier + 1)    
+        let next = this.findFirstItemInLastTier();
+        this.makeActive(next.tier, next.order)
       } else {
         this.closeSlide(_item.tier + 1)
       }    
+
+      // if go back property is is availble
+      if (!!_item.goBack) {
+        this.closeSlide(_item.tier - 1)
+        this.makeActiveViaId(this.findFirstItemInLastTier().id)      
+      }
+
+      // if do property is available, execute it
+      if (!!_item.do) {
+        _item.do()
+      }
     }
 
     checkDrawerState() {
@@ -384,16 +457,20 @@ class megaMenu extends React.Component {
         })             
     }
 
-    closeSlide(value) {     
-        let {numberOfSlides} = this.state
-        numberOfSlides.forEach((i) => {
-          anime.timeline()
-            .add({
-              targets: `.mm-container .slide-${i}`,
-              translateX: (`${i * -100}%`),
-              duration: 0,       
-            })     
-        })
+    closeSlide(value) {             
+      let {menuList, numberOfSlides} = this.state  
+      // remove data thats unused
+      for (let i = value + 1; i < numberOfSlides.length; i++) {
+        menuList[i] = []
+
+        anime.timeline()
+          .add({
+            targets: `.mm-container .slide-${i}`,
+            easing: 'easeInOutQuad',
+            translateX: (`${i * -100}%`),
+            duration: 500,       
+          })           
+      }        
     }
 
     closeAllSlides(startAt = 0) {
@@ -407,6 +484,10 @@ class megaMenu extends React.Component {
       }      
     }
 
+    makeid() {
+      return Math.random().toString(36).substring(7);
+    }
+
     render() {
       let { menuList, isOpen } = this.state 
       return pug`
@@ -418,35 +499,35 @@ class megaMenu extends React.Component {
           .mm-slide.slide-0
             ${menuList[0].map((item, index) => {                            
               return pug`
-                a(role="button" key=${item.text} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(item)} ) ${item.text} ${item.active}      
+                a(role="button" key=${this.makeid()} class=${item.active ? 'active' : ''} onClick=${() => this.activeNextSlide(item)} ) ${item.text} 
                   br
               `
               })}
           .mm-slide.slide-1
             ${menuList[1].map((item, index) => {     
               return pug`
-                a(role="button" key=${item.text} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(item)} ) ${item.text} ${item.active}      
+                a(role="button" key=${this.makeid()} class=${item.active ? 'active' : ''} onClick=${() => this.activeNextSlide(item)} ) ${item.text}     
                   br
               `
             })}
           .mm-slide.slide-2
             ${menuList[2].map((item, index) => {
               return pug`
-                a(role="button" key=${item.text} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(item)} ) ${item.text} ${item.active}      
+                a(role="button" key=${this.makeid()} class=${item.active ? 'active' : ''} onClick=${() => this.activeNextSlide(item)} ) ${item.text}     
                   br
               `
             })}
           .mm-slide.slide-3      
             ${menuList[3].map((item, index) => {   
               return pug`
-                a(role="button" key=${item.text} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(item)} ) ${item.text} ${item.active}      
+                a(role="button" key=${this.makeid()} class=${item.active ? 'active' : ''} onClick=${() => this.activeNextSlide(item)} ) ${item.text}     
                   br
               `
             })}
           .mm-slide.slide-4
             ${menuList[4].map((item, index) => {  
               return pug`
-                a(role="button" key=${item.text} class=${item.active ? 'active' : ''} onClick=${() => this.activeSetOnClick(item)} ) ${item.text} ${item.active}      
+                a(role="button" key=${this.makeid()} class=${item.active ? 'active' : ''} onClick=${() => this.activeNextSlide(item)} ) ${item.text}  
                   br
               `
             })}
@@ -454,8 +535,9 @@ class megaMenu extends React.Component {
     }
 }
 
-megaMenu.propTypes = {
 
+megaMenu.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default megaMenu;
